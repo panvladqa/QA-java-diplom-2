@@ -56,7 +56,7 @@ public class ChangeUserDataTests {
 
     @Test
     @DisplayName("Изменение данных пользователя: с авторизацией")
-    public void changeUserDataWithAuthIsSuccess() {
+    public void testChangeUserDataWithAuth() {
         String newEmail = "new_" + email;
         String newPassword = "new_" + password;
         String newName = "new_" + name;
@@ -64,23 +64,25 @@ public class ChangeUserDataTests {
         Response response = userApi.updateUser(newEmail, newPassword, newName, token);
 
         checks.verifyStatusCode(response, 200);
-        checks.verifySuccessField(response, "true");
+        checks.verifySuccessField(response, true);
         userApi.verifyUserData(response, newEmail, newName);
     }
 
     @Test
     @DisplayName("Изменение данных пользователя: с авторизацией, поля без изменений")
-    public void changeUserDataWithAuthWhenSendSameDataIsFailed() {
+    public void testChangeUserDataWithAuthWhenSendSameData() {
         Response response = userApi.updateUser(email, password, name, token);
 
         checks.verifyStatusCode(response, 200);
-        checks.verifySuccessField(response, "true");
+        checks.verifySuccessField(response, true);
         checks.verifyMessageField(response, null);
+
+        userApi.verifyUserData(response, email, name);
     }
 
     @Test
     @DisplayName("Изменение данных пользователя: без авторизации")
-    public void changeUserDataWithoutAuthIsFailed() {
+    public void testChangeUserDataWithoutAuth() {
         String newEmail = "new_" + email;
         String newPassword = "new_" + password;
         String newName = "new_" + name;
@@ -88,7 +90,7 @@ public class ChangeUserDataTests {
         Response response = userApi.updateUser(newEmail, newPassword, newName, "");
 
         checks.verifyStatusCode(response, 401);
-        checks.verifySuccessField(response, "false");
+        checks.verifySuccessField(response, false);
         checks.verifyMessageField(response, "You should be authorised");
     }
 }

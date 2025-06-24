@@ -2,7 +2,7 @@ package ya.resthandlers.httpclients;
 
 import io.restassured.response.Response;
 import ya.ApiUrls;
-import ya.requestEntities.User;
+import ya.request.entities.User;
 
 public class UserHTTPClient extends BaseHTTPClient {
 

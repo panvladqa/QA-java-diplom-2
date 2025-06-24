@@ -3,12 +3,14 @@ package ya.tests;
 import io.qameta.allure.Link;
 import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
+import static org.junit.Assert.*;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import ya.requestEntities.Ingredient;
-import ya.responseEntities.IngredientsResponse;
+import ya.request.entities.Ingredient;
+import ya.response.entities.OrderResponse;
+import ya.response.entities.IngredientsResponse;
 import ya.resthandlers.apiclients.ResponseChecks;
 import ya.resthandlers.apiclients.OrderApiClient;
 import ya.resthandlers.apiclients.UserApiClient;
@@ -75,6 +77,7 @@ public class OrderListTests {
             isOrderCreated = true;
         }
     }
+
     @After
     @Step("Очистка тестовых данных")
     public void cleanUp() {
@@ -87,7 +90,7 @@ public class OrderListTests {
 
     @Test
     @DisplayName("Получение списка заказов: авторизованный пользователь")
-    public void getOrderListWithAuthIsSuccess() {
+    public void testGetOrderListWithAuth() {
         if (token == null || !isOrderCreated) {
             fail("Не создан тестовый пользователь или заказ");
         }
@@ -95,12 +98,17 @@ public class OrderListTests {
         Response response = orderApi.getUserOrders(token);
 
         checks.verifyStatusCode(response, 200);
-        checks.verifySuccessField(response, "true");
+
+        OrderResponse orderResponse = response.body().as(OrderResponse.class);
+        assertNotNull("Ответ не содержит заказов", orderResponse.getOrders());
+        assertFalse("Список заказов пуст", orderResponse.getOrders().isEmpty());
+
+        checks.verifySuccessField(response, true);
     }
 
     @Test
     @DisplayName("Получение списка заказов: неавторизованный пользователь")
-    public void getOrderListWithoutAuthIsFailed() {
+    public void testGetOrderListWithoutAuth() {
         if (token == null || !isOrderCreated) {
             fail("Не создан тестовый пользователь или заказ");
         }
@@ -108,16 +116,16 @@ public class OrderListTests {
         Response response = orderApi.getUserOrders("");
 
         checks.verifyStatusCode(response, 401);
-        checks.verifySuccessField(response, "false");
+        checks.verifySuccessField(response, false);
         checks.verifyMessageField(response, "You should be authorised");
     }
 
     @Test
     @DisplayName("Получение списка всех заказов")
-    public void getOrderListAllIsSuccess() {
+    public void testGetAllOrders() {
         Response response = orderApi.getAllOrders();
 
         checks.verifyStatusCode(response, 200);
-        checks.verifySuccessField(response, "true");
+        checks.verifySuccessField(response, true);
     }
 }

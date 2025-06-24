@@ -2,7 +2,7 @@ package ya.resthandlers.httpclients;
 
 import io.restassured.response.Response;
 import ya.ApiUrls;
-import ya.requestEntities.Order;
+import ya.request.entities.Order;
 
 public class OrderHTTPClient extends BaseHTTPClient {
 

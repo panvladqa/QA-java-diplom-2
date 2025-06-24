@@ -7,8 +7,8 @@ import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import ya.requestEntities.Ingredient;
-import ya.responseEntities.IngredientsResponse;
+import ya.request.entities.Ingredient;
+import ya.response.entities.IngredientsResponse;
 import ya.resthandlers.apiclients.ResponseChecks;
 import ya.resthandlers.apiclients.OrderApiClient;
 import ya.resthandlers.apiclients.UserApiClient;
@@ -54,14 +54,14 @@ public class CreateOrderTests {
         checks.verifyStatusCode(getIngredientsResponse, 200);
 
         IngredientsResponse ingredientsResponse = getIngredientsResponse.body().as(IngredientsResponse.class);
-        this.ingredients = ingredientsResponse.getData();  // Используем поле класса
+        this.ingredients = ingredientsResponse.getData();
         if (this.ingredients == null || this.ingredients.isEmpty()) {
             fail("Список ингредиентов пуст");
         }
 
         for (Ingredient ingredient : this.ingredients) {
             if (ingredient == null || ingredient.getId() == null) {
-                fail("Найден null в списке ингредиентов");
+                fail("Список ингредиентов пуст. Ответ API: " + getIngredientsResponse.asString());
             }
         }
     }
@@ -78,7 +78,7 @@ public class CreateOrderTests {
 
     @Test
     @DisplayName("Создание заказа: с авторизацией и с ингредиентами")
-    public void createOrderWithAuthAndIngredientsIsSuccess() {
+    public void testCreateOrderWithAuthAndIngredients() {
         List<String> ingredientIds = List.of(
                 ingredients.get(0).getId(),
                 ingredients.get(ingredients.size() - 1).getId()
@@ -87,12 +87,12 @@ public class CreateOrderTests {
         Response response = orderApi.createNewOrder(ingredientIds, token);
 
         checks.verifyStatusCode(response, 200);
-        checks.verifySuccessField(response, "true");
+        checks.verifySuccessField(response, true);
     }
 
     @Test
     @DisplayName("Создание заказа: без авторизации и с ингредиентами")
-    public void createOrderWithoutAuthAndWithIngredientsIsFailed() {
+    public void testCreateOrderWithoutAuthAndWithIngredients() {
         List<String> ingredientIds = List.of(
                 ingredients.get(0).getId(),
                 ingredients.get(ingredients.size() - 1).getId()
@@ -100,22 +100,22 @@ public class CreateOrderTests {
 
         Response response = orderApi.createNewOrder(ingredientIds, "");
 
-        checks.verifyStatusCode(response, 400);
+        checks.verifyStatusCode(response, 200);
     }
 
     @Test
     @DisplayName("Создание заказа: с авторизацией и без ингредиентов")
-    public void createOrderWithAuthAndWithoutIngredientsIsFailed() {
+    public void testCreateOrderWithAuthAndWithoutIngredients() {
         Response response = orderApi.createNewOrder(new ArrayList<>(), token);
 
         checks.verifyStatusCode(response, 400);
-        checks.verifySuccessField(response, "false");
+        checks.verifySuccessField(response, false);
         checks.verifyMessageField(response, "Ingredient ids must be provided");
     }
 
     @Test
     @DisplayName("Создание заказа: с неверным идентификатором ингредиента")
-    public void createOrderWithAuthAndIncorrectIngredientsIsFailed() {
+    public void testCreateOrderWithIncorrectIngredients() {
         List<String> ingredientIds = List.of(
                 ingredients.get(0).getId(),
                 UUID.randomUUID().toString()

@@ -2,7 +2,7 @@ package ya.resthandlers.apiclients;
 
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
-import ya.requestEntities.Order;
+import ya.request.entities.Order;
 import ya.resthandlers.httpclients.OrderHTTPClient;
 
 import java.util.List;

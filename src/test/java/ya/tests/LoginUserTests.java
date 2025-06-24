@@ -56,52 +56,52 @@ public class LoginUserTests {
 
     @Test
     @DisplayName("Авторизация существующего пользователя: успешный вход")
-    public void loginUserIsSuccess() {
+    public void testLoginUserSuccess() {
         Response response = userApi.loginUser(email, password);
 
         checks.verifyStatusCode(response, 200);
-        checks.verifySuccessField(response, "true");
+        checks.verifySuccessField(response, true);
     }
 
     @Test
     @DisplayName("Авторизация: некорректный email")
-    public void loginUserIncorrectEmailIsFailed() {
+    public void testLoginWithIncorrectEmail() {
         String incorrectEmail = "newE-mail_" + UUID.randomUUID() + "@mail.com";
         Response response = userApi.loginUser(incorrectEmail, password);
 
         checks.verifyStatusCode(response, 401);
-        checks.verifySuccessField(response, "false");
+        checks.verifySuccessField(response, false);
         checks.verifyMessageField(response, "email or password are incorrect");
     }
 
     @Test
     @DisplayName("Авторизация: некорректный пароль")
-    public void loginUserIncorrectPasswordIsFailed() {
+    public void testLoginWithIncorrectPassword() {
         String incorrectPassword = password + UUID.randomUUID();
         Response response = userApi.loginUser(email, incorrectPassword);
 
         checks.verifyStatusCode(response, 401);
-        checks.verifySuccessField(response, "false");
+        checks.verifySuccessField(response, false);
         checks.verifyMessageField(response, "email or password are incorrect");
     }
 
     @Test
     @DisplayName("Авторизация: отсутствует email")
-    public void loginUserMissedEmailIsFailed() {
+    public void testLoginWithoutEmail() {
         Response response = userApi.loginUser("", password);
 
         checks.verifyStatusCode(response, 401);
-        checks.verifySuccessField(response, "false");
+        checks.verifySuccessField(response, false);
         checks.verifyMessageField(response, "email or password are incorrect");
     }
 
     @Test
     @DisplayName("Авторизация: отсутствует пароль")
-    public void loginUserMissedPasswordIsFailed() {
+    public void testLoginWithoutPassword() {
         Response response = userApi.loginUser(email, "");
 
         checks.verifyStatusCode(response, 401);
-        checks.verifySuccessField(response, "false");
+        checks.verifySuccessField(response, false);
         checks.verifyMessageField(response, "email or password are incorrect");
     }
 }

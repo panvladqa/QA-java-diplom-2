@@ -45,7 +45,7 @@ public class CreateUserTests {
 
     @Test
     @DisplayName("Создание пользователя: успешное создание")
-    public void createNewUserIsSuccess() {
+    public void testCreateNewUserSuccess() {
         Response response = userApi.createUser(email, password, name);
 
         if (response.getStatusCode() == 200) {
@@ -53,12 +53,12 @@ public class CreateUserTests {
         }
 
         checks.verifyStatusCode(response, 200);
-        checks.verifySuccessField(response, "true");
+        checks.verifySuccessField(response, true);
     }
 
     @Test
     @DisplayName("Создание двух одинаковых пользователей: второй должен провалиться")
-    public void createNewSimilarUsersIsFailed() {
+    public void testCreateDuplicateUsersFailure() {
         Response firstUserResponse = userApi.createUser(email, password, name);
         Response secondUserResponse = userApi.createUser(email, password, name);
 
@@ -67,13 +67,13 @@ public class CreateUserTests {
         }
 
         checks.verifyStatusCode(secondUserResponse, 403);
-        checks.verifySuccessField(secondUserResponse, "false");
+        checks.verifySuccessField(secondUserResponse, false);
         checks.verifyMessageField(secondUserResponse, "User already exists");
     }
 
     @Test
     @DisplayName("Создание пользователя: без email")
-    public void createNewUserMissedEmailIsFailed() {
+    public void testCreateUserWithoutEmailFailure() {
         Response response = userApi.createUser("", password, name);
 
         if (response.getStatusCode() == 200) {
@@ -81,13 +81,13 @@ public class CreateUserTests {
         }
 
         checks.verifyStatusCode(response, 403);
-        checks.verifySuccessField(response, "false");
+        checks.verifySuccessField(response, false);
         checks.verifyMessageField(response, "Email, password and name are required fields");
     }
 
     @Test
     @DisplayName("Создание пользователя: без пароля")
-    public void createNewUserMissedPasswordIsFailed() {
+    public void testCreateUserWithoutPasswordFailure() {
         Response response = userApi.createUser(email, "", name);
 
         if (response.getStatusCode() == 200) {
@@ -95,13 +95,13 @@ public class CreateUserTests {
         }
 
         checks.verifyStatusCode(response, 403);
-        checks.verifySuccessField(response, "false");
+        checks.verifySuccessField(response, false);
         checks.verifyMessageField(response, "Email, password and name are required fields");
     }
 
     @Test
     @DisplayName("Создание пользователя: без имени")
-    public void createNewUserMissedNameIsFailed() {
+    public void testCreateUserWithoutNameFailure() {
         Response response = userApi.createUser(email, password, "");
 
         if (response.getStatusCode() == 200) {
@@ -109,13 +109,13 @@ public class CreateUserTests {
         }
 
         checks.verifyStatusCode(response, 403);
-        checks.verifySuccessField(response, "false");
+        checks.verifySuccessField(response, false);
         checks.verifyMessageField(response, "Email, password and name are required fields");
     }
 
     @Test
     @DisplayName("Создание пользователя: без всех полей")
-    public void createNewUserMissedAllParamsIsFailed() {
+    public void testCreateUserWithoutAllFieldsFailure() {
         Response response = userApi.createUser("", "", "");
 
         if (response.getStatusCode() == 200) {
@@ -123,7 +123,7 @@ public class CreateUserTests {
         }
 
         checks.verifyStatusCode(response, 403);
-        checks.verifySuccessField(response, "false");
+        checks.verifySuccessField(response, false);
         checks.verifyMessageField(response, "Email, password and name are required fields");
     }
 }

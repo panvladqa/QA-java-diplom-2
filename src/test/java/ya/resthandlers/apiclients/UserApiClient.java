@@ -4,8 +4,8 @@ import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import org.hamcrest.MatcherAssert;
-import ya.requestEntities.User;
-import ya.responseEntities.UserResponse;
+import ya.request.entities.User;
+import ya.response.entities.UserResponse;
 import ya.resthandlers.httpclients.UserHTTPClient;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -55,7 +55,6 @@ public class UserApiClient extends UserHTTPClient {
         MatcherAssert.assertThat("Не совпадают email-ы", actualUser.getEmail(), equalTo(expectedEmail));
         MatcherAssert.assertThat("Не совпадают имена", actualUser.getName(), equalTo(expectedName));
 
-        // Проверка, что пользователь успешно вошёл в систему
         new ResponseChecks().verifyStatusCode(loginUser(expectedEmail, "wrong_password"), 401);
     }
 
